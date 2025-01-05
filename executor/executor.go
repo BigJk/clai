@@ -22,6 +22,12 @@ func Execute(messages []ai.Message, userInput string, rootDir string) ([]ai.Mess
 	data["SampleFilesDeep"] = func(folder string, count int, meta bool) string {
 		return SampleFilesDeep(filepath.Join(rootDir, folder), count, meta)
 	}
+	data["SampleFilesPattern"] = func(folder string, pattern string, count int, meta bool) string {
+		return SampleFilesPattern(filepath.Join(rootDir, folder), pattern, count, meta)
+	}
+	data["SampleFilesPatternDeep"] = func(folder string, pattern string, count int, meta bool) string {
+		return SampleFilesPatternDeep(filepath.Join(rootDir, folder), pattern, count, meta)
+	}
 	data["SampleLines"] = func(file string, count int) string {
 		return SampleLines(filepath.Join(rootDir, file), count)
 	}
