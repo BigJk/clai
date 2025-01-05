@@ -23,7 +23,7 @@ func NewClient(opts ...Options) *Client {
 		URL:    "https://api.openai.com/v1/chat/completions",
 		APIKey: "",
 		client: &http.Client{
-			Timeout: time.Second * 30,
+			Timeout: time.Second * 60 * 5,
 		},
 	}
 
