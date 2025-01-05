@@ -43,7 +43,8 @@ jobs:
           GOOS: ${{ matrix.os }}
           GOARCH: ${{ matrix.arch }}
         run: |
-          go build -v -o "clai${{ matrix.ext }}" ./cmd/clai
+          VERSION=${GITHUB_REF#refs/tags/}
+          go build -v -ldflags="-X main.Version=${VERSION}" -o "clai${{ matrix.ext }}" ./cmd/clai
           tar -czf "clai-${{ matrix.os }}-${{ matrix.arch }}.tar.gz" "clai${{ matrix.ext }}"
 
       - name: Upload Build Artifact

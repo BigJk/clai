@@ -44,9 +44,13 @@ model: gpt-4o-mini
 
 CLAI provides several commands to help you manage and run your workflows:
 
-### Configuration
+### Basic Commands
 
 ```bash
+# Show version
+clai version
+clai --version
+
 # Create a new config file in the current directory
 clai create-config --openai      # Configure for OpenAI
 clai create-config --open_router # Configure for OpenRouter

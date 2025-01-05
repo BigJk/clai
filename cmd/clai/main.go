@@ -20,6 +20,8 @@ type Config struct {
 	Model  string
 }
 
+var Version = "dev"
+
 func loadConfig() (*Config, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -245,17 +247,29 @@ func runMultipleCmd() *cobra.Command {
 	return cmd
 }
 
+func versionCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("clai version %s\n", Version)
+		},
+	}
+}
+
 func main() {
 	loadConfig()
 
 	rootCmd := &cobra.Command{
-		Use:   "clai",
-		Short: "CLAI - Command Line AI Workflow Runner",
+		Use:     "clai",
+		Short:   "CLAI - Command Line AI Workflow Runner",
+		Version: Version,
 	}
 
 	rootCmd.AddCommand(createConfigCmd())
 	rootCmd.AddCommand(runCmd())
 	rootCmd.AddCommand(runMultipleCmd())
+	rootCmd.AddCommand(versionCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
