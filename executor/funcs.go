@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -148,4 +149,116 @@ func RunCommand(command string, args ...string) string {
 		panic(err)
 	}
 	return string(out)
+}
+
+// SampleFilesPattern reads count random files from the folder whose content matches the pattern and appends them as a string.
+// If meta is set the file name is included
+func SampleFilesPattern(folder string, pattern string, count int, meta bool) string {
+	files, err := os.ReadDir(folder)
+	if err != nil {
+		panic(err)
+	}
+
+	var matchingFiles []os.DirEntry
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		content, err := os.ReadFile(filepath.Join(folder, file.Name()))
+		if err != nil {
+			continue
+		}
+
+		matched, err := regexp.MatchString(pattern, string(content))
+		if err != nil {
+			continue
+		}
+
+		if matched {
+			matchingFiles = append(matchingFiles, file)
+		}
+	}
+
+	if count > len(matchingFiles) {
+		count = len(matchingFiles)
+	}
+
+	rand.Shuffle(len(matchingFiles), func(i, j int) {
+		matchingFiles[i], matchingFiles[j] = matchingFiles[j], matchingFiles[i]
+	})
+
+	var result strings.Builder
+	for i := 0; i < count; i++ {
+		file := matchingFiles[i]
+		content, err := os.ReadFile(filepath.Join(folder, file.Name()))
+		if err != nil {
+			result.WriteString(fmt.Sprintf("Error reading file %s: %v\n", file.Name(), err))
+			continue
+		}
+
+		if meta {
+			result.WriteString(fmt.Sprintf("====== File: %s\n", file.Name()))
+		}
+		result.WriteString(RemoveFrontmatter(file.Name(), string(content)))
+		result.WriteString("\n\n")
+	}
+
+	return result.String()
+}
+
+// SampleFilesPatternDeep reads count random files from the folder and its subdirectories whose content matches the pattern
+// and appends them as a string. If meta is set the file name is included.
+func SampleFilesPatternDeep(folder string, pattern string, count int, meta bool) string {
+	var matchingFiles []string
+	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return nil
+			}
+
+			matched, err := regexp.MatchString(pattern, string(content))
+			if err != nil {
+				return nil
+			}
+
+			if matched {
+				matchingFiles = append(matchingFiles, path)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	if count > len(matchingFiles) {
+		count = len(matchingFiles)
+	}
+
+	rand.Shuffle(len(matchingFiles), func(i, j int) {
+		matchingFiles[i], matchingFiles[j] = matchingFiles[j], matchingFiles[i]
+	})
+
+	var result strings.Builder
+	for i := 0; i < count; i++ {
+		file := matchingFiles[i]
+		content, err := os.ReadFile(file)
+		if err != nil {
+			result.WriteString(fmt.Sprintf("Error reading file %s: %v\n", file, err))
+			continue
+		}
+
+		if meta {
+			result.WriteString(fmt.Sprintf("====== File: %s\n", file))
+		}
+		result.WriteString(RemoveFrontmatter(file, string(content)))
+		result.WriteString("\n\n")
+	}
+
+	return result.String()
 }
