@@ -16,36 +16,39 @@ func Execute(messages []ai.Message, userInput string, rootDir string) ([]ai.Mess
 		data = map[string]any{"Input": userInput}
 	}
 
-	data["SampleFiles"] = func(folder string, count int, meta bool) string {
+	registerFunc := func(names []string, f any) {
+		for _, name := range names {
+			data[name] = f
+		}
+	}
+
+	registerFunc([]string{"SampleFiles", "SF"}, func(folder string, count int, meta bool) string {
 		return SampleFiles(filepath.Join(rootDir, folder), count, meta)
-	}
-	data["SampleFilesDeep"] = func(folder string, count int, meta bool) string {
+	})
+	registerFunc([]string{"SampleFilesDeep", "SFD"}, func(folder string, count int, meta bool) string {
 		return SampleFilesDeep(filepath.Join(rootDir, folder), count, meta)
-	}
-	data["SampleFilesPattern"] = func(folder string, pattern string, count int, meta bool) string {
+	})
+	registerFunc([]string{"SampleFilesPattern", "SFP"}, func(folder string, pattern string, count int, meta bool) string {
 		return SampleFilesPattern(filepath.Join(rootDir, folder), pattern, count, meta)
-	}
-	data["SampleFilesPatternDeep"] = func(folder string, pattern string, count int, meta bool) string {
+	})
+	registerFunc([]string{"SampleFilesPatternDeep", "SFDP"}, func(folder string, pattern string, count int, meta bool) string {
 		return SampleFilesPatternDeep(filepath.Join(rootDir, folder), pattern, count, meta)
-	}
-	data["SampleLines"] = func(file string, count int) string {
+	})
+	registerFunc([]string{"SampleLines", "SL"}, func(file string, count int) string {
 		return SampleLines(filepath.Join(rootDir, file), count)
-	}
-	data["File"] = func(file string) string {
+	})
+	registerFunc([]string{"File", "F"}, func(file string) string {
 		return File(filepath.Join(rootDir, file))
-	}
-	data["SampleChunk"] = func(file string, count int) string {
+	})
+	registerFunc([]string{"SampleChunk", "SC"}, func(file string, count int) string {
 		return SampleChunk(filepath.Join(rootDir, file), count)
-	}
-	data["SampleLines"] = func(file string, count int) string {
-		return SampleLines(filepath.Join(rootDir, file), count)
-	}
-	data["RunCommand"] = func(command string, args ...string) string {
+	})
+	registerFunc([]string{"RunCommand", "RC"}, func(command string, args ...string) string {
 		if command[0] == '.' {
 			command = filepath.Join(rootDir, command[1:])
 		}
 		return RunCommand(command, args...)
-	}
+	})
 
 	var newMessages []ai.Message
 	for i := range messages {
