@@ -131,6 +131,8 @@ In your workflow files, you can use several helper functions:
 - `{{ .CustomInput }}`, `{{ .Field1 }}`, etc.: Access JSON fields (when using JSON input)
 - `{{ call .SampleFiles "path" n false }}`: Sample n random files from the specified path
 - `{{ call .SampleFiles "path" n true }}`: Sample n random files with their filenames as headers
+- `{{ call .SampleFilesDeep "path" n false }}`: Sample n random files from the specified path and its subdirectories
+- `{{ call .SampleFilesDeep "path" n true }}`: Sample n random files from the specified path and its subdirectories with their filenames as headers
 - `{{ call .SampleLines "file" n }}`: Sample n random lines from the specified file
 - `{{ call .File "path" }}`: Read and return the entire contents of a file
 - `{{ call .SampleChunk "file" n }}`: Read a random chunk of n consecutive lines from a file

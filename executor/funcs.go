@@ -33,7 +33,7 @@ func SampleFiles(folder string, count int, meta bool) string {
 			continue
 		}
 
-		content, err := ioutil.ReadFile(filepath.Join(folder, file.Name()))
+		content, err := os.ReadFile(filepath.Join(folder, file.Name()))
 		if err != nil {
 			result.WriteString(fmt.Sprintf("Error reading file %s: %v\n", file.Name(), err))
 			continue
@@ -43,6 +43,46 @@ func SampleFiles(folder string, count int, meta bool) string {
 			result.WriteString(fmt.Sprintf("====== File: %s\n", file.Name()))
 		}
 		result.WriteString(RemoveFrontmatter(file.Name(), string(content)))
+		result.WriteString("\n\n")
+	}
+
+	return result.String()
+}
+
+// SampleFilesDeep reads count random files from the folder and appends them as a string.
+// If meta is set the file name is included. This is a recursive function.
+func SampleFilesDeep(folder string, count int, meta bool) string {
+	var possibleFiles []string
+	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			possibleFiles = append(possibleFiles, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	rand.Shuffle(len(possibleFiles), func(i, j int) {
+		possibleFiles[i], possibleFiles[j] = possibleFiles[j], possibleFiles[i]
+	})
+
+	var result strings.Builder
+	for i := 0; i < count; i++ {
+		file := possibleFiles[i]
+		content, err := os.ReadFile(file)
+		if err != nil {
+			result.WriteString(fmt.Sprintf("Error reading file %s: %v\n", file, err))
+			continue
+		}
+
+		if meta {
+			result.WriteString(fmt.Sprintf("====== File: %s\n", file))
+		}
+		result.WriteString(RemoveFrontmatter(file, string(content)))
 		result.WriteString("\n\n")
 	}
 
