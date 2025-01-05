@@ -37,8 +37,30 @@ The config file should be named `.clairc` and be placed in the current directory
 ```yaml
 url: https://api.openai.com/v1/chat/completions
 apikey: YOUR_OPENAI_API_KEY
-model: gpt-4o-mini
+model: gpt-4-mini
 ```
+
+### Environment Variables
+
+You can also configure CLAI using environment variables. These take precedence over the config file:
+
+```bash
+# OpenAI API configuration
+export CLAI_URL="https://api.openai.com/v1/chat/completions"
+export CLAI_APIKEY="your-api-key"
+export CLAI_MODEL="gpt-4-mini"
+
+# OpenRouter configuration example
+export CLAI_URL="https://openrouter.ai/api/v1/chat/completions"
+export CLAI_APIKEY="your-openrouter-key"
+export CLAI_MODEL="openai/gpt-4"
+```
+
+Configuration priority (highest to lowest):
+1. Environment variables
+2. Config file in current directory (`./.clairc`)
+3. Config file in home directory (`$HOME/.clairc`)
+4. Default values
 
 ## CLI Usage
 
@@ -50,6 +72,9 @@ CLAI provides several commands to help you manage and run your workflows:
 # Show version
 clai version
 clai --version
+
+# Show current configuration
+clai vars
 
 # Create a new config file in the current directory
 clai create-config --openai      # Configure for OpenAI

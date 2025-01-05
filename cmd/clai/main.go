@@ -28,6 +28,7 @@ func loadConfig() (*Config, error) {
 		return nil, fmt.Errorf("error getting home directory: %w", err)
 	}
 
+	// Set config name and type
 	viper.SetConfigName(".clairc")
 	viper.SetConfigType("yaml")
 
@@ -35,11 +36,21 @@ func loadConfig() (*Config, error) {
 	viper.AddConfigPath(home) // $HOME/.clairc
 	viper.AddConfigPath(".")  // ./.clairc (current directory)
 
-	// Set required fields
+	// Set required fields with defaults
 	viper.SetDefault("url", "")
 	viper.SetDefault("apikey", "")
 	viper.SetDefault("model", "")
 
+	// Bind environment variables
+	viper.SetEnvPrefix("CLAI")
+	viper.AutomaticEnv()
+
+	// Explicitly bind each config key to its environment variable
+	viper.BindEnv("url", "CLAI_URL")
+	viper.BindEnv("apikey", "CLAI_APIKEY")
+	viper.BindEnv("model", "CLAI_MODEL")
+
+	// Read config file (ignore if not found)
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("error reading config file: %w", err)
@@ -257,6 +268,61 @@ func versionCmd() *cobra.Command {
 	}
 }
 
+func varsCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "vars",
+		Short: "Show current configuration values and their sources",
+		Run: func(cmd *cobra.Command, args []string) {
+			// Get config file path
+			configFile := viper.ConfigFileUsed()
+			configSource := "not found"
+			if configFile != "" {
+				configSource = configFile
+			}
+
+			// Function to check if a value is from env
+			isFromEnv := func(key string) bool {
+				envKey := "CLAI_" + strings.ToUpper(key)
+				_, exists := os.LookupEnv(envKey)
+				return exists
+			}
+
+			// Function to get source for a key
+			getSource := func(key string) string {
+				if isFromEnv(key) {
+					return fmt.Sprintf("environment variable CLAI_%s", strings.ToUpper(key))
+				}
+				if configFile != "" {
+					return fmt.Sprintf("config file (%s)", configFile)
+				}
+				return "default value"
+			}
+
+			// Print config info
+			fmt.Printf("Configuration:\n")
+			fmt.Printf("Config file: %s\n\n", configSource)
+
+			// Print each value and its source
+			fmt.Printf("Values:\n")
+			fmt.Printf("  url: %s\n    source: %s\n", viper.GetString("url"), getSource("url"))
+
+			// Print apikey securely
+			apiKey := viper.GetString("apikey")
+			maskedKey := "not set"
+			if apiKey != "" {
+				if len(apiKey) > 8 {
+					maskedKey = apiKey[:4] + "..." + apiKey[len(apiKey)-4:]
+				} else {
+					maskedKey = "***"
+				}
+			}
+			fmt.Printf("  apikey: %s\n    source: %s\n", maskedKey, getSource("apikey"))
+
+			fmt.Printf("  model: %s\n    source: %s\n", viper.GetString("model"), getSource("model"))
+		},
+	}
+}
+
 func main() {
 	loadConfig()
 
@@ -270,6 +336,7 @@ func main() {
 	rootCmd.AddCommand(runCmd())
 	rootCmd.AddCommand(runMultipleCmd())
 	rootCmd.AddCommand(versionCmd())
+	rootCmd.AddCommand(varsCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
