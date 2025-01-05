@@ -250,7 +250,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "clai",
-		Short: "CLAI - Command Line AI Assistant",
+		Short: "CLAI - Command Line AI Workflow Runner",
 	}
 
 	rootCmd.AddCommand(createConfigCmd())

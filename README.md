@@ -10,15 +10,24 @@ I extensifly use LLMs to brainstorm ideas, especially in the context of TTRPGs l
 
 ## Installation
 
-### GO
+### Quick Install (Linux and macOS)
+
+This will install the latest version of `clai` to `/usr/local/bin`
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bigjk/clai/main/install.sh | bash
+```
+
+### Manual Installation
+
+#### Go
 
 ```bash
 go install github.com/bigjk/clai@latest
 ```
 
-### Script
-
-todo
+#### Binary Release
+You can download the pre-built binary for your platform from the [releases page](https://github.com/bigjk/clai/releases).
 
 ## Config File
 
