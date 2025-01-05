@@ -1,12 +1,12 @@
 # CL(A)I
 
-CLAI is a command line interface to quickly create and run workflows against LLM with helper to make it easier to insert data into the workflow. Data can come from the user, commands or files. There are utilities to sample files, lines and chunks from files, to quickly build examples.
+CLAI is a command-line interface designed to quickly create and run workflows against Large Language Models (LLMs), with helpers to facilitate data insertion into the workflow. Data can be sourced from users, commands, or files. The tool provides utilities for sampling files, lines, and chunks from files to rapidly build examples.
 
-This can be helpful for creating workflows that generate new data based on existing data files. The templating engine is based on [Go's html/template](https://pkg.go.dev/html/template). By providing the templating methods it's easy to insert up-to-date data into the workflow.
+This tool is particularly useful for creating workflows that generate new data based on existing data files. The templating engine is built on [Go's html/template](https://pkg.go.dev/html/template). By offering templating methods, CLAI makes it simple to insert up-to-date data into the workflow.
 
 ## Background
 
-I extensifly use LLMs to brainstorm ideas, especially in the context of TTRPGs like Dungeons & Dragons. I wanted to make it easier to create and run workflows against LLMs with up-to-date examples from my obsidian vault.
+I extensively use LLMs for brainstorming ideas, especially in the context of tabletop role-playing games (TTRPGs) like Dungeons & Dragons. My goal was to streamline the process of creating and running workflows against LLMs, incorporating current examples from my Obsidian vault.
 
 ## Installation
 
