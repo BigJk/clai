@@ -42,7 +42,7 @@ func SampleFiles(folder string, count int, meta bool) string {
 		if meta {
 			result.WriteString(fmt.Sprintf("====== File: %s\n", file.Name()))
 		}
-		result.Write(content)
+		result.WriteString(RemoveFrontmatter(file.Name(), string(content)))
 		result.WriteString("\n\n")
 	}
 
@@ -56,7 +56,7 @@ func SampleLines(file string, count int) string {
 		panic(err)
 	}
 
-	lines := strings.Split(string(content), "\n")
+	lines := strings.Split(RemoveFrontmatter(file, string(content)), "\n")
 	if count > len(lines) {
 		count = len(lines)
 	}
@@ -80,7 +80,7 @@ func File(file string) string {
 	if err != nil {
 		panic(err)
 	}
-	return string(content)
+	return RemoveFrontmatter(file, string(content))
 }
 
 // SampleChunk reads a file and returns a random chunk with lines count
@@ -90,7 +90,7 @@ func SampleChunk(file string, count int) string {
 		panic(err)
 	}
 
-	lines := strings.Split(string(content), "\n")
+	lines := strings.Split(RemoveFrontmatter(file, string(content)), "\n")
 	if count > len(lines) {
 		count = len(lines)
 	}
