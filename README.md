@@ -8,6 +8,8 @@ This tool is particularly useful for creating workflows that generate new data b
 
 I extensively use LLMs for brainstorming ideas, especially in the context of tabletop role-playing games (TTRPGs) like Dungeons & Dragons. My goal was to streamline the process of creating and running workflows against LLMs, incorporating current examples from my Obsidian vault.
 
+A obsidian integration for CLAI is available [here](https://github.com/bigjk/clai-obsidian).
+
 ## Installation
 
 ### Quick Install (Linux and macOS)
